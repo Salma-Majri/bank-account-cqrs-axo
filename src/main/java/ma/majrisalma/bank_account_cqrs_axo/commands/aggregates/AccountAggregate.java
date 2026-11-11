@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import ma.majrisalma.bank_account_cqrs_axo.commands.commands.AddAccountCommand;
 import ma.majrisalma.bank_account_cqrs_axo.commands.commands.CreditAccountCommand;
 import ma.majrisalma.bank_account_cqrs_axo.enums.AccountStatus;
+import ma.majrisalma.bank_account_cqrs_axo.events.AccountActivatedEvent;
 import ma.majrisalma.bank_account_cqrs_axo.events.AccountCreatedEvent;
 import ma.majrisalma.bank_account_cqrs_axo.events.AccountCreditedEvent;
 import org.axonframework.commandhandling.CommandHandler;
@@ -35,6 +36,11 @@ public class AccountAggregate {
                 AccountStatus.CREATED,
                 command.getCurrency()
         ));
+        AggregateLifecycle.apply(new AccountActivatedEvent(
+                command.getId(),
+                AccountStatus.ACTIVATED
+        ));
+    }
     }
 
     @EventSourcingHandler
