@@ -41,7 +41,6 @@ public class AccountAggregate {
                 AccountStatus.ACTIVATED
         ));
     }
-    }
 
     @EventSourcingHandler
     public void on(AccountCreatedEvent event){

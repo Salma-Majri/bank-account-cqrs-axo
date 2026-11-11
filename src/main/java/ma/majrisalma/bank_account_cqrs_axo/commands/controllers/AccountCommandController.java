@@ -18,10 +18,11 @@ import java.util.stream.Stream;
 public class AccountCommandController {
     private CommandGateway commandGateway;
     private EventStore eventStore;
-    public AccountCommandController(CommandGateway commandGateway) {
-        this.commandGateway = commandGateway;
-    }
 
+    public AccountCommandController(CommandGateway commandGateway, EventStore eventStore) {
+        this.commandGateway = commandGateway;
+        this.eventStore = eventStore;
+    }
     @PostMapping("/add")
     public CompletableFuture<String> addNewAccount(@RequestBody AddNewAccountRequestDTO request) {
         CompletableFuture<String> response = commandGateway.send(new AddAccountCommand(
