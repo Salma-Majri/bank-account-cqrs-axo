@@ -2,8 +2,10 @@ package ma.majrisalma.bank_account_cqrs_axo.commands.aggregates;
 
 import lombok.extern.slf4j.Slf4j;
 import ma.majrisalma.bank_account_cqrs_axo.commands.commands.AddAccountCommand;
+import ma.majrisalma.bank_account_cqrs_axo.commands.commands.CreditAccountCommand;
 import ma.majrisalma.bank_account_cqrs_axo.enums.AccountStatus;
 import ma.majrisalma.bank_account_cqrs_axo.events.AccountCreatedEvent;
+import ma.majrisalma.bank_account_cqrs_axo.events.AccountCreditedEvent;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -41,5 +43,27 @@ public class AccountAggregate {
         this.accountId = event.getAccountId();
         this.balance = event.getInitialBalance();
         this.status = event.getStatus();
+    }
+
+
+    @CommandHandler
+    public void handle(CreditAccountCommand command){
+        log.info("############# CreditAccountCommand Received ###############");
+        if(!status.equals(AccountStatus.ACTIVATED))
+            throw new RuntimeException("The account " + command.getId() + " is not activated. Current status: " + status);
+        if (command.getAmount() <= 0)
+            throw new IllegalArgumentException("Amount must be positive");
+        AggregateLifecycle.apply(new AccountCreditedEvent(
+                command.getId(),
+                command.getAmount(),
+                command.getCurrency()
+        ));
+    }
+
+
+    @EventSourcingHandler
+    public void on(AccountCreditedEvent event){
+        log.info("################ AccountCreditedEvent occured ###############");
+        this.balance = this.balance + event.getAmount();
     }
 }
