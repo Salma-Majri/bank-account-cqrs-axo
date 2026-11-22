@@ -81,7 +81,7 @@ public class AccountAggregate {
     @CommandHandler
     public void handle(DebitAccountCommand command){
         log.info("############# DebitAccountCommand Received #############");
-        if(!status.equals(AccountStatus.ACTIVATED)) throw new RuntimeException("The account "+command.getId()+" ...");
+        if(!status.equals(AccountStatus.ACTIVATED)) throw new RuntimeException("The account "+command.getId()+" is not activated. Current status: " + status);
         if(balance<command.getAmount()) throw new RuntimeException("Balance Not sufficient Exception");
         if (command.getAmount()<=0) throw new IllegalArgumentException("Amount must be positive");
         AggregateLifecycle.apply(new AccountDebitedEvent(
