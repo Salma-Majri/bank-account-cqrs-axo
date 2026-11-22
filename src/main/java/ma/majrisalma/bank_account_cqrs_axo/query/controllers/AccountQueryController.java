@@ -1,0 +1,27 @@
+package ma.majrisalma.bank_account_cqrs_axo.query.controllers;
+
+import ma.majrisalma.bank_account_cqrs_axo.query.entities.Account;
+import ma.majrisalma.bank_account_cqrs_axo.query.queries.GetAllAccountsQuery;
+import org.axonframework.messaging.responsetypes.ResponseTypes;
+import org.axonframework.queryhandling.QueryGateway;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+public class AccountQueryController {
+    private QueryGateway queryGateway;
+
+    public AccountQueryController(QueryGateway queryGateway) {
+        this.queryGateway = queryGateway;
+    }
+
+    @GetMapping("/all")
+    public CompletableFuture<List<Account>> getAllAccount(){
+        CompletableFuture<List<Account>> response = queryGateway.query(
+                new GetAllAccountsQuery(),
+                ResponseTypes.multipleInstancesOf(Account.class)
+        );
+        return response;
+    }
+}
