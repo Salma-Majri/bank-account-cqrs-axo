@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import lombok.*;
 import ma.majrisalma.bank_account_cqrs_axo.enums.AccountStatus;
 
+import java.time.Instant;
 import java.util.Date;
 
 @Entity
@@ -19,7 +20,7 @@ public class Account {
     @Id
     private String id;
     private double balance;
-    private Date createdAt;
+    private Instant createdAt;
     @Enumerated(EnumType.STRING)
     private AccountStatus status;
     private String currency;

@@ -2,6 +2,7 @@ package ma.majrisalma.bank_account_cqrs_axo.query.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.Date;
 @Entity
 @Getter
@@ -13,7 +14,7 @@ public class AccountOperation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Date date;
+    private Instant date;
     private double amount;
     @Enumerated(EnumType.STRING)
     private OperationType type;
