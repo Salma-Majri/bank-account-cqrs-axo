@@ -3,9 +3,11 @@ package ma.majrisalma.bank_account_cqrs_axo.commands.controllers;
 import ma.majrisalma.bank_account_cqrs_axo.commands.commands.AddAccountCommand;
 import ma.majrisalma.bank_account_cqrs_axo.commands.commands.CreditAccountCommand;
 import ma.majrisalma.bank_account_cqrs_axo.commands.commands.DebitAccountCommand;
+import ma.majrisalma.bank_account_cqrs_axo.commands.commands.UpdateAccountStatusCommand;
 import ma.majrisalma.bank_account_cqrs_axo.dtos.AddNewAccountRequestDTO;
 import ma.majrisalma.bank_account_cqrs_axo.dtos.CreditAccountRequestDTO;
 import ma.majrisalma.bank_account_cqrs_axo.dtos.DebitAccountRequestDTO;
+import ma.majrisalma.bank_account_cqrs_axo.dtos.UpdateAccountStatusRequestDTO;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.eventsourcing.FilteringEventStorageEngine;
 import org.axonframework.eventsourcing.eventstore.EventStore;
@@ -52,6 +54,16 @@ public class AccountCommandController {
                 request.accountId(),
                 request.amount(),
                 request.currency()
+        ));
+        return response;
+    }
+
+
+    @PutMapping("/updateStatus")
+    public CompletableFuture<String> updateStatus(@RequestBody UpdateAccountStatusRequestDTO request) {
+        CompletableFuture<String> response = commandGateway.send(new UpdateAccountStatusCommand(
+                request.accountId(),
+                request.status()
         ));
         return response;
     }
