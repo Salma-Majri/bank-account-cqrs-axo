@@ -2,8 +2,10 @@ package ma.majrisalma.bank_account_cqrs_axo.commands.controllers;
 
 import ma.majrisalma.bank_account_cqrs_axo.commands.commands.AddAccountCommand;
 import ma.majrisalma.bank_account_cqrs_axo.commands.commands.CreditAccountCommand;
+import ma.majrisalma.bank_account_cqrs_axo.commands.commands.DebitAccountCommand;
 import ma.majrisalma.bank_account_cqrs_axo.dtos.AddNewAccountRequestDTO;
 import ma.majrisalma.bank_account_cqrs_axo.dtos.CreditAccountRequestDTO;
+import ma.majrisalma.bank_account_cqrs_axo.dtos.DebitAccountRequestDTO;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.eventsourcing.FilteringEventStorageEngine;
 import org.axonframework.eventsourcing.eventstore.EventStore;
@@ -44,6 +46,16 @@ public class AccountCommandController {
         return response;
     }
 
+    @PostMapping("/debit")
+    public CompletableFuture<String> debitAccount(@RequestBody DebitAccountRequestDTO request){
+        CompletableFuture<String> response = commandGateway.send(new DebitAccountCommand(
+                request.accountId(),
+                request.amount(),
+                request.currency()
+        ));
+        return response;
+    }
+
     @ExceptionHandler(Exception.class)
     public String exceptionHandler(Exception exception){
         return exception.getMessage();
@@ -52,7 +64,6 @@ public class AccountCommandController {
 
     @GetMapping("/events/{accountId}")
     public Stream eventStore(@PathVariable String accountId){
-
         return eventStore.readEvents(accountId).asStream();
     }
 }

@@ -3,10 +3,12 @@ package ma.majrisalma.bank_account_cqrs_axo.commands.aggregates;
 import lombok.extern.slf4j.Slf4j;
 import ma.majrisalma.bank_account_cqrs_axo.commands.commands.AddAccountCommand;
 import ma.majrisalma.bank_account_cqrs_axo.commands.commands.CreditAccountCommand;
+import ma.majrisalma.bank_account_cqrs_axo.commands.commands.DebitAccountCommand;
 import ma.majrisalma.bank_account_cqrs_axo.enums.AccountStatus;
 import ma.majrisalma.bank_account_cqrs_axo.events.AccountActivatedEvent;
 import ma.majrisalma.bank_account_cqrs_axo.events.AccountCreatedEvent;
 import ma.majrisalma.bank_account_cqrs_axo.events.AccountCreditedEvent;
+import ma.majrisalma.bank_account_cqrs_axo.events.AccountDebitedEvent;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -77,4 +79,26 @@ public class AccountAggregate {
         log.info("################ AccountCreditedEvent occured ###############");
         this.balance = this.balance + event.getAmount();
     }
+
+    @CommandHandler
+    public void handle(DebitAccountCommand command){
+        log.info("############# DebitAccountCommand Received #############");
+        if(!status.equals(AccountStatus.ACTIVATED)) throw new RuntimeException("The account "+command.getId()+" ...");
+        if(balance<command.getAmount()) throw new RuntimeException("Balance Not sufficient Exception");
+        if (command.getAmount()<=0) throw new IllegalArgumentException("Amount must be positive");
+        AggregateLifecycle.apply(new AccountDebitedEvent(
+                command.getId(),
+                command.getAmount(),
+                command.getCurrency()
+        ));
+    }
+
+
+    @EventSourcingHandler
+    public void on(AccountDebitedEvent event){
+        log.info("############# AccountDebitedEvent occured #############");
+        this.accountId = event.getAccountId();
+        this.balance = this.balance - event.getAmount();
+    }
+
 }
