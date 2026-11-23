@@ -27,9 +27,25 @@ services:
     networks:
       - accounts-net
 
+  axonserver:
+    image: axoniq/axonserver:latest
+    container_name: axonserver
+    ports:
+      - "8024:8024"
+      - "8124:8124"
+    volumes:
+      - axonserver-data:/data
+      - axonserver-events:/events
+      - axonserver-config:/config
+    networks:
+      - accounts-net
+
 volumes:
   accounts_data:
   accounts_pgadmin_data:
+  axonserver-data:
+  axonserver-events:
+  axonserver-config:
 
 networks:
   accounts-net:
