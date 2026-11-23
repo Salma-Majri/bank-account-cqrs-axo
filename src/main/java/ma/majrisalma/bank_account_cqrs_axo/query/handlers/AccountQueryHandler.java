@@ -5,6 +5,7 @@ import ma.majrisalma.bank_account_cqrs_axo.query.entities.Account;
 import ma.majrisalma.bank_account_cqrs_axo.query.entities.AccountOperation;
 import ma.majrisalma.bank_account_cqrs_axo.query.queries.GetAccountStatementQuery;
 import ma.majrisalma.bank_account_cqrs_axo.query.queries.GetAllAccountsQuery;
+import ma.majrisalma.bank_account_cqrs_axo.query.queries.WatchEventQuery;
 import ma.majrisalma.bank_account_cqrs_axo.query.repository.AccountRepository;
 import ma.majrisalma.bank_account_cqrs_axo.query.repository.OperationRepository;
 import org.axonframework.queryhandling.QueryHandler;
@@ -34,5 +35,10 @@ public class AccountQueryHandler {
         Account account = accountRepository.findById(query.getAccountId()).get();
         List<AccountOperation> operations = operationRepository.findByAccountId(query.getAccountId());
         return new AccountStatementResponseDTO(account, operations);
+    }
+
+    @QueryHandler
+    public AccountOperation on(WatchEventQuery query){
+        return AccountOperation.builder().build();
     }
 }
